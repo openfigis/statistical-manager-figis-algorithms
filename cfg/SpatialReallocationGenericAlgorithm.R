@@ -20,6 +20,11 @@ print("Reading intersection...")
 intersections <- readWFS(inputIntersection)
 if(class(intersections) == "SpatialPolygonsDataFrame") intersections <- intersections@data
 
+#aggregation
+aggregate <- NULL
+print(length(aggregateField))
+if(nchar(aggregateField) > 1) aggregate <- aggregateField
+
 #reallocation
 result <- reallocate(
 			x = statistics,
@@ -31,7 +36,7 @@ result <- reallocate(
 			data = statField,
 			warea = surfaceField,
 			wprob = NULL,
-			aggregates = aggregateField
+			aggregates = aggregate
 		)
 
 write.table(result, outputFile, row.names = FALSE, col.names = TRUE, sep=",", dec=".")
