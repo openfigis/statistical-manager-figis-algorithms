@@ -24,33 +24,88 @@ import org.junit.Test;
  *
  */
 public class SpatialReallocationGenericAlgorithmTest {
-
-	ComputationalAgent transducer = null;
-	AlgorithmConfiguration config = null;
+	
+	ComputationalAgent transducer1 = null;
+	ComputationalAgent transducer2 = null;
+	AlgorithmConfiguration config1 = null;
+	AlgorithmConfiguration config2 = null;
 	
 	@Before
 	public void setup() throws Exception{
-		config =  new AlgorithmConfiguration();
-		config.setConfigPath("./cfg/");
-		config.setAgent("FIGIS_SPATIAL_REALLOCATION_GENERIC");
 		
-		config.setParam("InputData", "http://data.fao.org/sdmx/repository/data/CAPTURE/..HER/FAO/?startPeriod=1990&endPeriod=2010");
-		config.setParam("InputIntersection", "http://www.fao.org/figis/geoserver/GeoRelationship/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GeoRelationship:FAO_AREAS_x_EEZ_HIGHSEAS");
-		config.setParam("RefAreaField", "FAO_MAJOR_AREA");
-		config.setParam("IntersectionAreaField", "FAO_AREAS");
-		config.setParam("StatField", "obsValue");
-		config.setParam("SurfaceField", "INT_AREA");
-		config.setParam("AggregateField", "EEZ_HIGHSEAS");
+		//test data
+		String CFG_PATH = "./cfg/";
+		String ALGORITHM_ID = "FIGIS_SPATIAL_REALLOCATION_GENERIC";
+		String INPUT_DATA = "http://data.fao.org/sdmx/repository/data/CAPTURE/..HER/FAO/?startPeriod=1990&endPeriod=2010";
+		String INPUT_INTERSECTION = "http://www.fao.org/figis/geoserver/GeoRelationship/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GeoRelationship:FAO_AREAS_x_EEZ_HIGHSEAS";
+		String REF_AREA_FIELD = "FAO_MAJOR_AREA";
+		String INT_AREA_FIELD = "FAO_AREAS";
+		String STAT_FIELD = "obsValue";
+		String SURF_FIELD = "INT_AREA";
 		
-		List<ComputationalAgent> trans = TransducerersFactory.getTransducerers(config);
-		transducer = trans.get(0);
-		transducer.init();
+		//config 1 (without aggregation)
+		config1 =  new AlgorithmConfiguration();
+		config1.setConfigPath(CFG_PATH);
+		config1.setAgent(ALGORITHM_ID);
+		config1.setParam("InputData", INPUT_DATA);
+		config1.setParam("InputIntersection", INPUT_INTERSECTION);
+		config1.setParam("RefAreaField", REF_AREA_FIELD);
+		config1.setParam("IntersectionAreaField", INT_AREA_FIELD);
+		config1.setParam("StatField", STAT_FIELD);
+		config1.setParam("SurfaceField", SURF_FIELD);
+		config1.setParam("AggregateField", "");
+		
+		List<ComputationalAgent> trans1 = TransducerersFactory.getTransducerers(config1);
+		transducer1 = trans1.get(0);
+		transducer1.init();
+		
+		//config 2 (with aggregation)
+		config2 =  new AlgorithmConfiguration();
+		config2.setConfigPath(CFG_PATH);
+		config2.setAgent(ALGORITHM_ID);
+		config2.setParam("InputData", INPUT_DATA);
+		config2.setParam("InputIntersection", INPUT_INTERSECTION);
+		config2.setParam("RefAreaField", REF_AREA_FIELD);
+		config2.setParam("IntersectionAreaField", INT_AREA_FIELD);
+		config2.setParam("StatField", STAT_FIELD);
+		config2.setParam("SurfaceField", SURF_FIELD);
+		config2.setParam("AggregateField", "EEZ_HIGHSEAS");
+		
+		List<ComputationalAgent> trans2 = TransducerersFactory.getTransducerers(config2);
+		transducer2 = trans2.get(0);
+		transducer2.init();
+	
 	}
 	
 	@Test
-	public void testProcess() throws Exception{	
-		Regressor.process(transducer);
-		StatisticalType st = transducer.getOutput();
+	public void testRawProcess() throws Exception{	
+		Regressor.process(transducer1);
+		StatisticalType st = transducer1.getOutput();
+		
+		File csvOutput = (File) ((PrimitiveType) st).getContent();
+		try {
+			BufferedReader CSVFile = new BufferedReader(new FileReader(csvOutput));
+			String dataRow = CSVFile.readLine();
+
+			int rowNb = -1;
+			while (dataRow != null) {
+				dataRow = CSVFile.readLine();
+				rowNb++;
+			}
+			System.out.println(rowNb);
+			//Assert.assertEquals(16236, rowNb);
+
+			CSVFile.close();
+		}catch(Exception e){
+			throw new Exception("Failed to read CSV file");
+		}
+		
+	}
+	
+	@Test
+	public void testAggregateProcess() throws Exception{	
+		Regressor.process(transducer2);
+		StatisticalType st = transducer2.getOutput();
 		
 		File csvOutput = (File) ((PrimitiveType) st).getContent();
 		try {
@@ -61,7 +116,8 @@ public class SpatialReallocationGenericAlgorithmTest {
 			Assert.assertEquals("UN_COUNTRY", SpreadUtils.unquote(dataHeader[1]));
 			Assert.assertEquals("SPECIES", SpreadUtils.unquote(dataHeader[2]));
 			Assert.assertEquals("obsTime", SpreadUtils.unquote(dataHeader[3]));
-			Assert.assertEquals("spreadValue", SpreadUtils.unquote(dataHeader[4]));
+			Assert.assertEquals("UNIT", SpreadUtils.unquote(dataHeader[4]));
+			Assert.assertEquals("spreadValue", SpreadUtils.unquote(dataHeader[5]));
 			
 			int rowNb = -1;
 			while (dataRow != null) {
@@ -74,7 +130,6 @@ public class SpatialReallocationGenericAlgorithmTest {
 		}catch(Exception e){
 			throw new Exception("Failed to read CSV file");
 		}
-		
 	}
 	
 }
