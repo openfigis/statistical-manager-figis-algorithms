@@ -19,6 +19,8 @@ statistics <- as.data.frame(sdmx)
 print("Reading intersection...")
 intersectionURL <- paste("http://www.fao.org/figis/geoserver/GeoRelationship/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GeoRelationship:", inputIntersection, sep = "")
 intersections <- readWFS(intersectionURL)
+if(class(intersections) == "SpatialPolygonsDataFrame") intersections <- intersections@data
+
 targetAreaField <- unlist(strsplit(inputIntersection,"_x_"))[1]
 aggregateField <- NULL
 print(includeCalculations)
