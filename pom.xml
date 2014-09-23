@@ -29,8 +29,9 @@
 	
 	<!-- Properties -->
 	<properties>
-		<distroDirectory>${project.basedir}/distro</distroDirectory>
-		<configDirectory>${project.basedir}/config</configDirectory>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<configDirectory>${project.basedir}/cfg</configDirectory>
+		<assemblyDirectory>${project.basedir}/assembly</assemblyDirectory>
 	</properties>
 	
 	<!-- Dependencies -->
@@ -53,6 +54,7 @@
 	<!-- Build -->
 	<build>
 		<plugins>
+			<!-- Compile -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -62,6 +64,8 @@
 					<target>7</target>
 				</configuration>
 			</plugin>
+			
+			<!-- Tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -69,6 +73,27 @@
 				<configuration>
 					<skipTests>false</skipTests>
 				</configuration>
+			</plugin>
+			
+			<!-- R scripts archive -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<descriptors>
+						<descriptor>${assemblyDirectory}/descriptor-r.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>scripts</id>
+						<phase>install</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
