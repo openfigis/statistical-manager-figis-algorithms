@@ -33,13 +33,14 @@ public class SDMXDataConverter extends StandardLocalExternalAlgorithm{
 	
 	@Override
 	public String getDescription() {
-		return "This algorithm is for testing Statistical Manager and Rscripts." +
-			   "The business logic just parses a SDMX GenericData file, and gives it as CSV";
+		return "This tool allows to convert easily a SDMX dataset into CSV, by calling"
+				+ "the rsdmx package for R";
 	}
 
 	@Override
 	protected void setInputParameters() {
 		addStringInput("InputData", "Input file in SDMX-ML GenericData format", null);
+		inputs.add(new PrimitiveType(Boolean.class.getName(), null, PrimitiveTypes.BOOLEAN, "RemoveNaObs", "If NA observations have to be removed", "false"));
 	}
 	
 	@Override
@@ -60,6 +61,7 @@ public class SDMXDataConverter extends StandardLocalExternalAlgorithm{
 		AnalysisLogger.getLogger().debug("SDMX parser algorithm -> Config path "+config.getConfigPath()+" Persistence path: "+config.getPersistencePath());
 		
 		LinkedHashMap<String,String> inputParameters = new LinkedHashMap<String, String>();
+		inputParameters.put("RemoveNaObs", config.getParam("RemoveNaObs").toUpperCase());
 		AnalysisLogger.getLogger().debug("SDMX parser algorithm -> Input Parameters: "+inputParameters);
 		
 		HashMap<String,String> codeInjection = null;

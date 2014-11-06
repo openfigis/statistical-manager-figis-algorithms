@@ -12,5 +12,10 @@ print(paste("InputFile = ", inputFile, sep=""))
 print(paste("OutputFile = ", outputFile, sep=""))
 sdmx <- readSDMX(inputFile, isURL = FALSE) # here isURL = FALSE because SM seems to download inputFile from URL
 statistics <- as.data.frame(sdmx)
+if(RemoveNaObs){
+	print(nrow(statistics))
+	statistics <- statistics[complete.cases(statistics),]
+	print(nrow(statistics))
+}
 write.table(statistics, outputFile, row.names = FALSE, col.names = TRUE, sep=",", dec=".")
 print(Sys.time())

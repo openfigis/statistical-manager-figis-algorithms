@@ -32,7 +32,8 @@ public class SDMXDataConverterTest {
 	public void setup() throws Exception{
 		config =  new AlgorithmConfiguration();
 		config.setConfigPath("./cfg/");
-		config.setParam("InputData", "http://data.fao.org/sdmx/repository/data/CAPTURE/67.810./FAO/?startPeriod=2006&endPeriod=2006");
+		config.setParam("InputData", "http://data.fao.org/sdmx/repository/data/CAPTURE/..HER/FAO/?startPeriod=1990&endPeriod=2010");
+		config.setParam("RemoveNaObs", "true");
 		config.setAgent("FIGIS_SDMX_DATA_CONVERTER");
 		
 		List<ComputationalAgent> trans = TransducerersFactory.getTransducerers(config);
@@ -61,7 +62,7 @@ public class SDMXDataConverterTest {
 				dataRow = CSVFile.readLine();
 				rowNb++;
 			}
-			Assert.assertEquals(22, rowNb);
+			Assert.assertEquals(920, rowNb);
 
 			CSVFile.close();
 		}catch(Exception e){
