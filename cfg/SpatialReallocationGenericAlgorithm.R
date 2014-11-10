@@ -14,6 +14,7 @@ print(Sys.time())
 print("Reading SDMX stat data ...")
 sdmx <- readSDMX(inputFile, isURL = FALSE) # here isURL = FALSE because SM seems to download inputFile from URL
 statistics <- as.data.frame(sdmx)
+print(head(statistics))
 
 #read intersections
 print("Reading intersection...")
