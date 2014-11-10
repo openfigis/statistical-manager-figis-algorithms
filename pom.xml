@@ -75,7 +75,7 @@
 				</configuration>
 			</plugin>
 			
-			<!-- R scripts archive -->
+			<!-- R scripts & SM properties archives -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -83,6 +83,7 @@
 				<configuration>
 					<descriptors>
 						<descriptor>${assemblyDirectory}/descriptor-r.xml</descriptor>
+						<descriptor>${assemblyDirectory}/descriptor-properties.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
@@ -93,8 +94,16 @@
 							<goal>single</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>properties</id>
+						<phase>install</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
+			
 		</plugins>
 	</build>
 </project>
