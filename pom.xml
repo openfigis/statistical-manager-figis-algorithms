@@ -13,8 +13,9 @@
 	<artifactId>statistical-manager-figis-algorithms</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>statistical-manager-figis-algorithms</name>
-	<description>A project hosting FIGIS algorithms for the iMarine Statistical Manager</description>	
-	
+	<description>A project hosting FIGIS algorithms for the iMarine Statistical Manager</description>
+	<url>https://github.com/openfigis/statistical-manager-figis-algorithms</url>
+
 	<developers>
 		<developer>
 			<id>eblondel</id>

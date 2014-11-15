@@ -11,7 +11,7 @@ print(Sys.time())
 
 #read stats
 print("Reading statistical data ...")
-statistics <- read.table(inputFile, sep = ",", h = TRUE)
+statistics <- read.table(inputFile, sep = ",", h = TRUE, quote = "\"")
 print(head(statistics))
 
 #read intersections

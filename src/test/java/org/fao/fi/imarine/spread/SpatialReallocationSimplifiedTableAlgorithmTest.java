@@ -31,13 +31,15 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 		//test data
 		String CFG_PATH = "./cfg/";
 		String ALGORITHM_ID = "FIGIS_SPATIAL_REALLOCATION_SIMPLIFIED_TABLE";
-		String GEO_REF = "fao_major_area";
+		String GEO_REF = "cl_fao_major_area_new_code";
 		String STAT = "obsvalue";
 		String INTERSECTION = "FAO_AREAS_x_EEZ_HIGHSEAS";
+		
+		String dbURL = "jdbc:postgresql://host/db";
 		String dbUser = "user";
 		String dbPwd = "pwd";
-		String dbURL = "url";
-		String intable = "generic_id407c7aa2_fcfd_46bd_abb8_c0aee57a01ea";
+		
+		String intable = "generic_ida5c07152_ea15_48e5_b0cf_4cef82c23a50";
 		String serviceUser = null;
 		
 		//config 1 (without aggregation)
