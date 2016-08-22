@@ -11,7 +11,7 @@
 
 	<groupId>org.fao.fi.imarine</groupId>
 	<artifactId>statistical-manager-figis-algorithms</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>statistical-manager-figis-algorithms</name>
 	<description>A project hosting FIGIS algorithms for the iMarine Statistical Manager</description>
 	<url>https://github.com/openfigis/statistical-manager-figis-algorithms</url>
@@ -39,10 +39,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.gcube.dataanalysis</groupId>
-			<artifactId>EcologicalEngineExecutor</artifactId>
-			<version>1.6.1-SNAPSHOT</version>
+			<artifactId>ecological-engine</artifactId>
+			<version>1.9.0-SNAPSHOT</version>
 		</dependency>
-		
+		<dependency>
+		  <groupId>org.gcube.dataanalysis</groupId>
+		  <artifactId>ecological-engine-smart-executor</artifactId>
+		  <version>1.3.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

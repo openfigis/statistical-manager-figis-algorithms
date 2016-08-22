@@ -1,4 +1,4 @@
-package org.fao.fi.imarine.experiments;
+package org.fao.fi.dataanalysis.stats;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,9 +32,14 @@ public class SDMXDataConverterTest {
 	public void setup() throws Exception{
 		config =  new AlgorithmConfiguration();
 		config.setConfigPath("./cfg/");
-		config.setParam("InputData", "http://data.fao.org/sdmx/repository/data/CAPTURE/..HER/FAO/?startPeriod=1990&endPeriod=2010");
+		config.setPersistencePath("./cfg/");
+		config.setParam("InputData", "http://stats.oecd.org/restsdmx/sdmx.ashx/GetData/MIG/TOT../OECD?startTime=2000&endTime=2011");
 		config.setParam("RemoveNaObs", "true");
 		config.setAgent("FIGIS_SDMX_DATA_CONVERTER");
+		
+		//set the scope and the user (seems MANDATORY here...)
+		config.setGcubeScope( "/gcube/devsec/devVRE");
+		config.setParam("ServiceUserName", "test.user");
 		
 		List<ComputationalAgent> trans = TransducerersFactory.getTransducerers(config);
 		transducer = trans.get(0);
@@ -51,18 +56,22 @@ public class SDMXDataConverterTest {
 			BufferedReader CSVFile = new BufferedReader(new FileReader(csvOutput));
 			String dataRow = CSVFile.readLine();
 			String[] dataHeader = dataRow.split(",");
-			Assert.assertEquals("FAO_MAJOR_AREA", unquote(dataHeader[0]));
-			Assert.assertEquals("UN_COUNTRY", unquote(dataHeader[1]));
-			Assert.assertEquals("SPECIES", unquote(dataHeader[2]));
-			Assert.assertEquals("obsTime", unquote(dataHeader[3]));
-			Assert.assertEquals("obsValue", unquote(dataHeader[4]));
+			
+			Assert.assertEquals("CO2", unquote(dataHeader[0]));
+			Assert.assertEquals("VAR", unquote(dataHeader[1]));
+			Assert.assertEquals("GEN", unquote(dataHeader[2]));
+			Assert.assertEquals("COU", unquote(dataHeader[3]));
+			Assert.assertEquals("TIME_FORMAT", unquote(dataHeader[4]));
+			Assert.assertEquals("obsTime", unquote(dataHeader[5]));
+			Assert.assertEquals("obsValue", unquote(dataHeader[6]));
+			Assert.assertEquals("OBS_STATUS", unquote(dataHeader[7]));
 			
 			int rowNb = -1;
 			while (dataRow != null) {
 				dataRow = CSVFile.readLine();
 				rowNb++;
 			}
-			Assert.assertEquals(920, rowNb);
+			Assert.assertEquals(4341, rowNb);
 
 			CSVFile.close();
 		}catch(Exception e){

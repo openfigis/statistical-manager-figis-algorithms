@@ -1,4 +1,4 @@
-package org.fao.fi.imarine.spread;
+package org.fao.fi.dataanalysis.spread;
 
 import java.util.List;
 
@@ -40,18 +40,15 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 		String dbPwd = "pwd";
 		
 		String intable = "generic_ida5c07152_ea15_48e5_b0cf_4cef82c23a50";
-		String serviceUser = null;
 		
 		//config 1 (without aggregation)
 		config1 = new AlgorithmConfiguration();
 		config1.setConfigPath(CFG_PATH);
+		config1.setPersistencePath(CFG_PATH);
 		config1.setAgent(ALGORITHM_ID);
 		config1.setParam("DatabaseUserName", dbUser);
 		config1.setParam("DatabasePassword", dbPwd);
 		config1.setParam("DatabaseURL", dbURL);
-		if(serviceUser != null){
-			config1.setParam("ServiceUserName", serviceUser);
-		}
 		config1.setParam("Dataset", intable);
 		config1.setParam("Georef", GEO_REF);
 		config1.setParam("Statistic", STAT);
@@ -66,13 +63,11 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 		//config 2 (with aggregation)
 		config2 = new AlgorithmConfiguration();
 		config2.setConfigPath(CFG_PATH);
+		config2.setPersistencePath(CFG_PATH);
 		config2.setAgent(ALGORITHM_ID);
 		config2.setParam("DatabaseUserName", dbUser);
 		config2.setParam("DatabasePassword", dbPwd);
 		config2.setParam("DatabaseURL", dbURL);
-		if(serviceUser != null){
-			config2.setParam("ServiceUserName", serviceUser);
-		}
 		config2.setParam("Dataset", intable);
 		config2.setParam("Georef", GEO_REF);
 		config2.setParam("Statistic", STAT);

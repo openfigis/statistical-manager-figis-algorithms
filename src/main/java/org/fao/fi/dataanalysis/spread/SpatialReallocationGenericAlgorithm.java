@@ -1,4 +1,4 @@
-package org.fao.fi.imarine.spread;
+package org.fao.fi.dataanalysis.spread;
 
 import java.io.File;
 import java.util.HashMap;
@@ -12,20 +12,15 @@ import org.gcube.dataanalysis.ecoengine.interfaces.StandardLocalExternalAlgorith
 import org.gcube.dataanalysis.executor.util.RScriptsManager;
 
 /**
- * Spatial Reallocation simplified algorithm
+ * Spatial Reallocation algorithm
  * 
  * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
  *
  */
-public class SpatialReallocationSimplifiedAlgorithm extends StandardLocalExternalAlgorithm{
+public class SpatialReallocationGenericAlgorithm extends StandardLocalExternalAlgorithm{
 
 	RScriptsManager scriptManager;
 	String outputFile;
-
-	public enum Intersections{		
-		FAO_AREAS_x_EEZ_HIGHSEAS,
-		GRID_5DEG_x_EEZ_HIGHSEAS		
-	}
 	
 	@Override
 	public void init() throws Exception {
@@ -36,18 +31,19 @@ public class SpatialReallocationSimplifiedAlgorithm extends StandardLocalExterna
 	public String getDescription() {
 		return "The Spatial Reallocaton algorithm allows to estimate statistics for other areas " +
 				"from those where they were reported. The algorithm is based on spatial disaggregation technics " +
-				"and provides at now an area-weighted reallocation. This simplified algorithm is specifically targeting users " +
-				"from the FAO Fisheries and Aquaculture department, aims to facilitate its execution by doing abstraction of " +
-				"the intersections to provide.";
+				"and provides at now an area-weighted reallocation.";
 	}
 	
 	@Override
 	protected void setInputParameters() {
 		addStringInput("InputData", "Input statistics file, in SDMX-ML GenericData format", null);
+		addStringInput("InputIntersection", "Input intersection, in GML format", null);
 		addStringInput("RefAreaField","Field name of the area for which statistics are reported", null);
+		addStringInput("IntersectionAreaField","Equivalent Field name of the area in the intersection data", null);
+		addStringInput("SurfaceField", "Field name of the surface in the intersection data", null);
 		addStringInput("StatField","Field name of the statistics to be reallocated", null);
-		addEnumerateInput(Intersections.values(), "InputIntersection", "Intersection to use for the reallocation", Intersections.FAO_AREAS_x_EEZ_HIGHSEAS.name());
-		inputs.add(new PrimitiveType(Boolean.class.getName(), null, PrimitiveTypes.BOOLEAN, "IncludeCalculations", "Whether the intermediate calculations have to be included in the output", "false"));
+		addStringInput("AggregateField","Field name of the target area for which estimated statistics will be aggregated." +
+										"If not specified, disaggregated data with pre-calculations will be returned", null);
 	}
 	
 	@Override
@@ -57,7 +53,7 @@ public class SpatialReallocationSimplifiedAlgorithm extends StandardLocalExterna
 		
 		//instantiate the R script manager
 		scriptManager = new RScriptsManager();
-		String scriptName = "SpatialReallocationSimplifiedAlgorithm.R";
+		String scriptName = "SpatialReallocationGenericAlgorithm.R";
 		String defaultInputFileInTheScript = "statistics.xml";
 		String defaultOutputFileInTheScript = "spread_statistics.csv";
 		
@@ -69,15 +65,16 @@ public class SpatialReallocationSimplifiedAlgorithm extends StandardLocalExterna
 		
 		//input parameters: represent the context of the script. Values will be assigned in the R environment.
 		LinkedHashMap<String,String> inputParameters = new LinkedHashMap<String, String>();
-		inputParameters.put("refAreaField", "\""+config.getParam("RefAreaField")+"\"");
-		inputParameters.put("statField", "\""+config.getParam("StatField")+"\"");
 		inputParameters.put("inputIntersection", "\""+config.getParam("InputIntersection")+"\"");
-		inputParameters.put("includeCalculations", config.getParam("IncludeCalculations").toUpperCase());
+		inputParameters.put("refAreaField", "\""+config.getParam("RefAreaField")+"\"");
+		inputParameters.put("intersectionAreaField", "\""+config.getParam("IntersectionAreaField")+"\"");
+		inputParameters.put("surfaceField", "\""+config.getParam("SurfaceField")+"\"");
+		inputParameters.put("statField", "\""+config.getParam("StatField")+"\"");
+		inputParameters.put("aggregateField", "\""+config.getParam("AggregateField")+"\"");
 		AnalysisLogger.getLogger().debug("Spatial Reallocation -> Input Parameters: "+inputParameters);
 		
 		HashMap<String,String> codeInjection = null;
 		boolean scriptMustReturnAFile = true;
-		boolean uploadScriptOnTheInfrastructureWorkspace = false; //the Statistical Manager service will manage the upload
 		
 		AnalysisLogger.getLogger().debug("Spatial Reallocation -> Executing the script ");
 		status = 10;
@@ -85,7 +82,7 @@ public class SpatialReallocationSimplifiedAlgorithm extends StandardLocalExterna
 				config, scriptName,
 				inputData, inputParameters,
 				defaultInputFileInTheScript, defaultOutputFileInTheScript,
-				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace);
+				codeInjection, scriptMustReturnAFile, true, false, config.getPersistencePath());
 		
 		// assign the file path to an output variable for the SM
 		outputFile = scriptManager.currentOutputFileName;

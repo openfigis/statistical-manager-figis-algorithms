@@ -1,4 +1,4 @@
-package org.fao.fi.imarine.spread;
+package org.fao.fi.dataanalysis.spread;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -146,7 +146,6 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 				
 		HashMap<String,String> codeInjection = null;
 		boolean scriptMustReturnAFile = true;
-		boolean uploadScriptOnTheInfrastructureWorkspace = false; //the Statistical Manager service will manage the upload
 				
 		AnalysisLogger.getLogger().debug("Spatial Reallocation -> Executing the script ");
 		status = 10;
@@ -154,7 +153,7 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 				config, scriptName,
 				inputFile, inputParameters,
 				defaultInputFileInTheScript, defaultOutputFileInTheScript,
-				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace);
+				codeInjection, scriptMustReturnAFile, true, false, config.getPersistencePath());
 		
 		// assign the file path to an output variable for the SM
 		outputFile = scriptManager.currentOutputFileName;

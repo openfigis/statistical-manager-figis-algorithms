@@ -1,4 +1,4 @@
-package org.fao.fi.imarine.spread;
+package org.fao.fi.dataanalysis.spread;
 
 import java.io.FileWriter;
 import java.sql.Connection;

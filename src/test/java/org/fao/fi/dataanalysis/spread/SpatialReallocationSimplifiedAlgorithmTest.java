@@ -1,4 +1,4 @@
-package org.fao.fi.imarine.spread;
+package org.fao.fi.dataanalysis.spread;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,13 +7,13 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.fao.fi.dataanalysis.spread.SpreadUtils;
 import org.gcube.dataanalysis.ecoengine.configuration.AlgorithmConfiguration;
 import org.gcube.dataanalysis.ecoengine.datatypes.PrimitiveType;
 import org.gcube.dataanalysis.ecoengine.datatypes.StatisticalType;
 import org.gcube.dataanalysis.ecoengine.interfaces.ComputationalAgent;
 import org.gcube.dataanalysis.ecoengine.processing.factories.TransducerersFactory;
 import org.gcube.dataanalysis.ecoengine.test.regression.Regressor;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,8 +23,8 @@ import org.junit.Test;
  * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
  *
  */
-public class SpatialReallocationGenericAlgorithmTest {
-	
+public class SpatialReallocationSimplifiedAlgorithmTest {
+
 	ComputationalAgent transducer1 = null;
 	ComputationalAgent transducer2 = null;
 	AlgorithmConfiguration config1 = null;
@@ -35,48 +35,43 @@ public class SpatialReallocationGenericAlgorithmTest {
 		
 		//test data
 		String CFG_PATH = "./cfg/";
-		String ALGORITHM_ID = "FIGIS_SPATIAL_REALLOCATION_GENERIC";
+		String ALGORITHM_ID = "FIGIS_SPATIAL_REALLOCATION_SIMPLIFIED";
 		String INPUT_DATA = "http://data.fao.org/sdmx/repository/data/CAPTURE/..HER/FAO/?startPeriod=1990&endPeriod=2010";
-		String INPUT_INTERSECTION = "http://www.fao.org/figis/geoserver/GeoRelationship/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GeoRelationship:FAO_AREAS_x_EEZ_HIGHSEAS";
 		String REF_AREA_FIELD = "FAO_MAJOR_AREA";
-		String INT_AREA_FIELD = "FAO_AREAS";
 		String STAT_FIELD = "obsValue";
-		String SURF_FIELD = "INT_AREA";
+		String INPUT_INTERSECTION = "FAO_AREAS_x_EEZ_HIGHSEAS";
 		
-		//config 1 (without aggregation)
-		config1 =  new AlgorithmConfiguration();
+		//config 1 (with aggregation)
+		config1 = new AlgorithmConfiguration();
 		config1.setConfigPath(CFG_PATH);
+		config1.setPersistencePath(CFG_PATH);
 		config1.setAgent(ALGORITHM_ID);
 		config1.setParam("InputData", INPUT_DATA);
-		config1.setParam("InputIntersection", INPUT_INTERSECTION);
 		config1.setParam("RefAreaField", REF_AREA_FIELD);
-		config1.setParam("IntersectionAreaField", INT_AREA_FIELD);
 		config1.setParam("StatField", STAT_FIELD);
-		config1.setParam("SurfaceField", SURF_FIELD);
-		config1.setParam("AggregateField", "");
+		config1.setParam("InputIntersection", INPUT_INTERSECTION);
+		config1.setParam("IncludeCalculations", "true");
 		
 		List<ComputationalAgent> trans1 = TransducerersFactory.getTransducerers(config1);
 		transducer1 = trans1.get(0);
 		transducer1.init();
 		
-		//config 2 (with aggregation)
-		config2 =  new AlgorithmConfiguration();
+		//config 1 (with aggregation)
+		config2 = new AlgorithmConfiguration();
 		config2.setConfigPath(CFG_PATH);
+		config2.setPersistencePath(CFG_PATH);
 		config2.setAgent(ALGORITHM_ID);
 		config2.setParam("InputData", INPUT_DATA);
-		config2.setParam("InputIntersection", INPUT_INTERSECTION);
 		config2.setParam("RefAreaField", REF_AREA_FIELD);
-		config2.setParam("IntersectionAreaField", INT_AREA_FIELD);
 		config2.setParam("StatField", STAT_FIELD);
-		config2.setParam("SurfaceField", SURF_FIELD);
-		config2.setParam("AggregateField", "EEZ_HIGHSEAS");
+		config2.setParam("InputIntersection", INPUT_INTERSECTION);
+		config2.setParam("IncludeCalculations", "false");
 		
 		List<ComputationalAgent> trans2 = TransducerersFactory.getTransducerers(config2);
 		transducer2 = trans2.get(0);
 		transducer2.init();
-	
 	}
-	
+
 	@Test
 	public void testRawProcess() throws Exception{	
 		Regressor.process(transducer1);
@@ -86,7 +81,7 @@ public class SpatialReallocationGenericAlgorithmTest {
 		try {
 			BufferedReader CSVFile = new BufferedReader(new FileReader(csvOutput));
 			String dataRow = CSVFile.readLine();
-
+			
 			int rowNb = -1;
 			while (dataRow != null) {
 				dataRow = CSVFile.readLine();
@@ -99,7 +94,6 @@ public class SpatialReallocationGenericAlgorithmTest {
 		}catch(Exception e){
 			throw new Exception("Failed to read CSV file");
 		}
-		
 	}
 	
 	@Test
@@ -129,7 +123,7 @@ public class SpatialReallocationGenericAlgorithmTest {
 			CSVFile.close();
 		}catch(Exception e){
 			throw new Exception("Failed to read CSV file");
-		}
+		}	
 	}
 	
 }
