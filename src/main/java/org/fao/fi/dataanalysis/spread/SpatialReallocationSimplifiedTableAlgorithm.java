@@ -28,7 +28,7 @@ import org.hibernate.SessionFactory;
  * Spatial Reallocation simplified algorithm
  * tailored for the iMarine Tabular Data Manager
  * 
- * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
+ * @author Emmanuel Blondel
  *
  */
 public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalExternalAlgorithm {
@@ -102,29 +102,42 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 
 		//configuration
 		String inputTable = config.getParam("Dataset");
-		System.out.println("Origin Table: "+inputTable);
+		boolean withDBInput = !inputTable.contains(".csv");
+		AnalysisLogger.getLogger().debug("Origin Table: "+inputTable);
+		if(withDBInput){
+			AnalysisLogger.getLogger().debug("Input Type: GENERIC Table");
+		}else{
+			AnalysisLogger.getLogger().debug("Input Type: GENERIC CSV file");
+		}
 		
 		destinationTableLabel = config.getParam("TableLabel");
-		System.out.println("Destination Table Label: "+destinationTableLabel);
+		AnalysisLogger.getLogger().debug("Destination Table Label: "+destinationTableLabel);
 		
 		destinationTable = "spread_"+UUID.randomUUID().toString().replaceAll("-", "_");
 		AnalysisLogger.getLogger().debug(destinationTable);
 		
 		//db connection
+		//note: we instantiate the DB connection also if witDBInput = false, because we create a DB output table
 		config.setParam("DatabaseDriver", "org.postgresql.Driver");
 		dbconnection = DatabaseUtils.initDBSession(config);
 		
-		//get data from db
-		AnalysisLogger.getLogger().debug("Copying table to local csv file...");
-		
-		String inputFile = inputTable + ".csv";
+		//get data
+		String inputFile = null;
+		if(!withDBInput){
+			//if input table is a generic CSV file
+			AnalysisLogger.getLogger().debug("Getting generic csv file...");
+			inputFile = inputTable;
+		}else{
+			//if input table is a generic table
+			AnalysisLogger.getLogger().debug("Copying generic table to local csv file...");
+			inputFile = inputTable + ".csv";
+			SpreadUtils.createLocalFileFromRemoteTable(
+				inputFile, inputTable, ",", true,
+				config.getDatabaseUserName(),
+				config.getDatabasePassword(),
+				config.getDatabaseURL());
+		}
 		AnalysisLogger.getLogger().debug(inputFile);
-		SpreadUtils.createLocalFileFromRemoteTable(
-			inputFile, inputTable, ",", true,
-			config.getDatabaseUserName(),
-			config.getDatabasePassword(),
-			config.getDatabaseURL());
-		
 		status = 25;
 		
 		//instantiate the R script manager
@@ -147,6 +160,7 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 		HashMap<String,String> codeInjection = null;
 		boolean scriptMustReturnAFile = true;
 		boolean uploadScriptOnTheInfrastructureWorkspace = false;
+		boolean deleteTempFiles = true;
 				
 		AnalysisLogger.getLogger().debug("Spatial Reallocation -> Executing the script ");
 		status = 10;
@@ -154,7 +168,7 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 				config, scriptName,
 				inputFile, inputParameters,
 				defaultInputFileInTheScript, defaultOutputFileInTheScript,
-				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace, false, config.getConfigPath());
+				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace, deleteTempFiles, config.getConfigPath());
 		
 		// assign the file path to an output variable for the SM
 		outputFile = scriptManager.currentOutputFileName;
@@ -168,13 +182,15 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 		String tableSchema = null;
 		
 		//inherit fieldType from columns that are kept
-		Map<String,String> inputFields = SpreadUtils.getSchemaDescription(inputTable, dbconnection);
+		Map<String,String> inputFields = null;
+		if(withDBInput) inputFields = SpreadUtils.getSchemaDescription(inputTable, dbconnection);
 		BufferedReader br = new BufferedReader(new FileReader(outputFile));
 		String[] headers = br.readLine().split(",");
 		br.close();
 		for(String header : headers){
 			String fieldSchemaElement = SpreadUtils.unquote(header.toLowerCase());
-			if(inputFields.containsKey(fieldSchemaElement)){
+			
+			if(withDBInput && inputFields.containsKey(fieldSchemaElement)){
 				fieldSchemaElement += " "+inputFields.get(fieldSchemaElement);
 			}else{
 				if(fieldSchemaElement.matches("int_area") ||
@@ -196,6 +212,7 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 			}
 		}
 		tableSchema = "("+tableSchema+")";
+		
 		String createTableStatement = String.format("CREATE TABLE %s"+tableSchema, destinationTable);
 		AnalysisLogger.getLogger().debug(createTableStatement);
 		DatabaseFactory.executeSQLUpdate(String.format(createTableStatement, destinationTable), dbconnection);

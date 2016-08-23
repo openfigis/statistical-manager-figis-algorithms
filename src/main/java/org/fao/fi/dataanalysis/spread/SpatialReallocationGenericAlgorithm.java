@@ -14,7 +14,7 @@ import org.gcube.dataanalysis.executor.util.RScriptsManager;
 /**
  * Spatial Reallocation algorithm
  * 
- * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
+ * @author Emmanuel Blondel
  *
  */
 public class SpatialReallocationGenericAlgorithm extends StandardLocalExternalAlgorithm{
@@ -76,6 +76,7 @@ public class SpatialReallocationGenericAlgorithm extends StandardLocalExternalAl
 		HashMap<String,String> codeInjection = null;
 		boolean scriptMustReturnAFile = true;
 		boolean uploadScriptOnTheInfrastructureWorkspace = false;
+		boolean deleteTempFiles = true;
 		
 		AnalysisLogger.getLogger().debug("Spatial Reallocation -> Executing the script ");
 		status = 10;
@@ -83,7 +84,7 @@ public class SpatialReallocationGenericAlgorithm extends StandardLocalExternalAl
 				config, scriptName,
 				inputData, inputParameters,
 				defaultInputFileInTheScript, defaultOutputFileInTheScript,
-				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace, false, config.getConfigPath());
+				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace, deleteTempFiles, config.getConfigPath());
 
 		// assign the file path to an output variable for the SM
 		outputFile = scriptManager.currentOutputFileName;

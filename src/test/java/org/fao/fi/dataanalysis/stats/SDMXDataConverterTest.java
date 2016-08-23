@@ -20,7 +20,7 @@ import org.junit.Test;
 /**
  * SDMXDataConverter Test class
  * 
- * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
+ * @author Emmanuel Blondel
  *
  */
 public class SDMXDataConverterTest {
@@ -80,7 +80,6 @@ public class SDMXDataConverterTest {
 			throw new Exception("Failed to read CSV file");
 		}
 	}
-	
 	
 	public static String unquote(String str) {
 		int length = str == null ? -1 : str.length();

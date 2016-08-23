@@ -18,7 +18,7 @@ import org.gcube.dataanalysis.executor.util.RScriptsManager;
  * and integration of R scripts. The R script only proceeds only to a data conversion
  * from SDMX-ML document (dataset) to CSV, by means of the rsdmx R data abstraction library.
  * 
- * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
+ * @author Emmanuel Blondel
  *
  */
 public class SDMXDataConverter extends StandardLocalExternalAlgorithm{
@@ -68,13 +68,14 @@ public class SDMXDataConverter extends StandardLocalExternalAlgorithm{
 		HashMap<String,String> codeInjection = null;
 		boolean scriptMustReturnAFile = true;
 		boolean uploadScriptOnTheInfrastructureWorkspace = false;
+		boolean deleteTempFiles = true;
 		
 		AnalysisLogger.getLogger().debug("SDMX parser algorithm  -> Executing the script ");
 		status = 10;
 		scriptManager.executeRScript(
 				config, scriptName, inputData, inputParameters,
 				defaultInputFileInTheScript, defaultOutputFileInTheScript,
-				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace, false, config.getConfigPath());
+				codeInjection, scriptMustReturnAFile, uploadScriptOnTheInfrastructureWorkspace, deleteTempFiles, config.getConfigPath());
 
 		// assign the file path to an output variable for the SM
 		outputFile = scriptManager.currentOutputFileName;

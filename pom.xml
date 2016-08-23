@@ -13,7 +13,7 @@
 	<artifactId>statistical-manager-figis-algorithms</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<name>statistical-manager-figis-algorithms</name>
-	<description>A project hosting FIGIS algorithms for the iMarine Statistical Manager</description>
+	<description>A project hosting FIGIS algorithms for the iMarine/BlueBridge StatisticalManager newly named DataMiner</description>
 	<url>https://github.com/openfigis/statistical-manager-figis-algorithms</url>
 
 	<developers>
@@ -76,7 +76,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12</version>
 				<configuration>
-					<skipTests>false</skipTests>
+					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 			

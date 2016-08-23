@@ -20,13 +20,13 @@ import org.junit.Test;
 /**
  * SpatialDataReallocation Test class
  * 
- * @author Emmanuel Blondel <emmanuel.blondel@fao.org>
+ * @author Emmanuel Blondel
  *
  */
 public class SpatialReallocationGenericAlgorithmTest {
 	
 	static final String SERVICE_SCOPE = "/gcube/devsec/devVRE";
-	static final String SERVICE_USERNAME = "emmanuel.blondel";
+	static final String SERVICE_USERNAME = "name.surname";
 	
 	ComputationalAgent transducer1 = null;
 	ComputationalAgent transducer2 = null;

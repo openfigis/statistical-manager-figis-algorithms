@@ -17,7 +17,7 @@ import org.postgresql.core.BaseConnection;
  * (implemented while implementing SPREAD, they might be moved to
  *  other classes such as gCube DatabaseUtils)
  * 
- * @author eblondel
+ * @author Emmanuel Blondel
  *
  */
 public final class SpreadUtils {
