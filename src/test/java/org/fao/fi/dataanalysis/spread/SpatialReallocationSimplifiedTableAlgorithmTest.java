@@ -20,6 +20,9 @@ import org.junit.Test;
  */
 public class SpatialReallocationSimplifiedTableAlgorithmTest {
 
+	static final String SERVICE_SCOPE = "/gcube/devsec/devVRE";
+	static final String SERVICE_USERNAME = "emmanuel.blondel";
+	
 	ComputationalAgent transducer1 = null;
 	ComputationalAgent transducer2 = null;
 	AlgorithmConfiguration config1 = null;
@@ -55,6 +58,10 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 		config1.setParam("Intersection", INTERSECTION);
 		config1.setParam("IncludeCalculations", "true");
 		config1.setParam("TableLabel", "SPREAD output");
+		
+		//set the scope and the user
+		config1.setGcubeScope(SERVICE_SCOPE);
+		config1.setParam("ServiceUserName", SERVICE_USERNAME);
 	
 		List<ComputationalAgent> trans1 = TransducerersFactory.getTransducerers(config1);
 		transducer1 = trans1.get(0);
@@ -74,6 +81,10 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 		config2.setParam("Intersection", INTERSECTION);
 		config2.setParam("IncludeCalculations", "false");
 		config2.setParam("TableLabel", "SPREAD output");
+		
+		//set the scope and the user
+		config2.setGcubeScope(SERVICE_SCOPE);
+		config2.setParam("ServiceUserName", SERVICE_USERNAME);
 	
 		List<ComputationalAgent> trans2 = TransducerersFactory.getTransducerers(config2);
 		transducer2 = trans2.get(0);

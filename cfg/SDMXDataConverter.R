@@ -13,8 +13,15 @@ print(paste("OutputFile = ", outputFile, sep=""))
 sdmx <- readSDMX(inputFile, isURL = FALSE) # here isURL = FALSE because SM seems to download inputFile from URL
 statistics <- as.data.frame(sdmx)
 if(RemoveNaObs){
-	print(nrow(statistics))
-	statistics <- statistics[complete.cases(statistics),]
+	#default statField value
+	statField <- "obsValue"
+	
+	#in case of SDMXCompactData
+	if("OBS_VALUE" %in% colnames(statistics)){
+		statField <- "OBS_VALUE"
+	}
+	
+	statistics <- statistics[complete.cases(statistics[,statField]),]
 	print(nrow(statistics))
 }
 write.table(statistics, outputFile, row.names = FALSE, col.names = TRUE, sep=",", dec=".")

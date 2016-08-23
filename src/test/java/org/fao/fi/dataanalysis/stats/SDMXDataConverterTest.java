@@ -25,21 +25,23 @@ import org.junit.Test;
  */
 public class SDMXDataConverterTest {
 
+	static final String SERVICE_SCOPE = "/gcube/devsec/devVRE";
+	static final String SERVICE_USERNAME = "emmanuel.blondel";
+	
 	ComputationalAgent transducer = null;
 	AlgorithmConfiguration config = null;
 	
 	@Before
-	public void setup() throws Exception{
+	public void setup() throws Exception {
 		config =  new AlgorithmConfiguration();
 		config.setConfigPath("./cfg/");
-		config.setPersistencePath("./cfg/");
 		config.setParam("InputData", "http://stats.oecd.org/restsdmx/sdmx.ashx/GetData/MIG/TOT../OECD?startTime=2000&endTime=2011");
 		config.setParam("RemoveNaObs", "true");
 		config.setAgent("FIGIS_SDMX_DATA_CONVERTER");
 		
-		//set the scope and the user (seems MANDATORY here...)
-		config.setGcubeScope( "/gcube/devsec/devVRE");
-		config.setParam("ServiceUserName", "test.user");
+		//set the scope and the user
+		config.setGcubeScope(SERVICE_SCOPE);
+		config.setParam("ServiceUserName", SERVICE_USERNAME);
 		
 		List<ComputationalAgent> trans = TransducerersFactory.getTransducerers(config);
 		transducer = trans.get(0);
@@ -47,7 +49,7 @@ public class SDMXDataConverterTest {
 	}
 	
 	@Test
-	public void testProcess() throws Exception{	
+	public void testProcess() throws Exception {	
 		Regressor.process(transducer);
 		StatisticalType st = transducer.getOutput();
 		
@@ -71,7 +73,7 @@ public class SDMXDataConverterTest {
 				dataRow = CSVFile.readLine();
 				rowNb++;
 			}
-			Assert.assertEquals(4341, rowNb);
+			Assert.assertEquals(4339, rowNb);
 
 			CSVFile.close();
 		}catch(Exception e){

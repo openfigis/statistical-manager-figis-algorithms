@@ -25,6 +25,9 @@ import org.junit.Test;
  */
 public class SpatialReallocationGenericAlgorithmTest {
 	
+	static final String SERVICE_SCOPE = "/gcube/devsec/devVRE";
+	static final String SERVICE_USERNAME = "emmanuel.blondel";
+	
 	ComputationalAgent transducer1 = null;
 	ComputationalAgent transducer2 = null;
 	AlgorithmConfiguration config1 = null;
@@ -46,7 +49,6 @@ public class SpatialReallocationGenericAlgorithmTest {
 		//config 1 (without aggregation)
 		config1 =  new AlgorithmConfiguration();
 		config1.setConfigPath(CFG_PATH);
-		config1.setPersistencePath(CFG_PATH);
 		config1.setAgent(ALGORITHM_ID);
 		config1.setParam("InputData", INPUT_DATA);
 		config1.setParam("InputIntersection", INPUT_INTERSECTION);
@@ -55,6 +57,10 @@ public class SpatialReallocationGenericAlgorithmTest {
 		config1.setParam("StatField", STAT_FIELD);
 		config1.setParam("SurfaceField", SURF_FIELD);
 		config1.setParam("AggregateField", "");
+		
+		//set the scope and the user
+		config1.setGcubeScope(SERVICE_SCOPE);
+		config1.setParam("ServiceUserName", SERVICE_USERNAME);
 		
 		List<ComputationalAgent> trans1 = TransducerersFactory.getTransducerers(config1);
 		transducer1 = trans1.get(0);
@@ -72,6 +78,10 @@ public class SpatialReallocationGenericAlgorithmTest {
 		config2.setParam("StatField", STAT_FIELD);
 		config2.setParam("SurfaceField", SURF_FIELD);
 		config2.setParam("AggregateField", "EEZ_HIGHSEAS");
+		
+		//set the scope and the user
+		config2.setGcubeScope(SERVICE_SCOPE);
+		config2.setParam("ServiceUserName", SERVICE_USERNAME);
 		
 		List<ComputationalAgent> trans2 = TransducerersFactory.getTransducerers(config2);
 		transducer2 = trans2.get(0);
