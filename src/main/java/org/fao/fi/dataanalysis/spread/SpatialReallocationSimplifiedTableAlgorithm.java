@@ -1,6 +1,7 @@
 package org.fao.fi.dataanalysis.spread;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,14 +64,11 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 	
 	@Override
 	protected void setInputParameters() {		
-		List<TableTemplates> template= new ArrayList<TableTemplates>();
-		template.add(TableTemplates.GENERIC);
 		
-		//input table
-		InputTable table = new InputTable(template, "Dataset","An input dataset having at least a " +
-													"numerical column and a reference column corresponding " +
-													"to a geographic dimension");
-		inputs.add(table);
+		//input data
+		PrimitiveType inputData = new PrimitiveType(File.class.getName(), null, PrimitiveTypes.FILE, "Dataset",
+				"An input dataset having at least a numerical column and a reference column corresponding to a geographic dimension");
+		inputs.add(inputData);
 		
 		//reference column
 		ColumnType refColumn = new ColumnType("Dataset", "Georef", "Field name of the area for which statistics are reported", null, false);

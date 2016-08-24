@@ -3,30 +3,30 @@ inputFile <- "statistics.xml"
 outputFile <- "spread_statistics.csv"
 
 #package needs
+#------------
 require(rsdmx)
 require(RFigisGeo)
 
 #business logic
 #-------------
-print(Sys.time())
+cat(paste0(as.character(Sys.time()),"\n"))
 
 #read stats
-print("Reading SDMX stat data ...")
+cat("Reading SDMX stat data ...\n")
 sdmx <- readSDMX(inputFile, isURL = FALSE) # here isURL = FALSE because SM seems to download inputFile from URL
 statistics <- as.data.frame(sdmx)
-print(head(statistics))
 
 #read intersections
-print("Reading intersection...")
+cat("Reading intersection...\n")
 intersections <- readWFS(inputIntersection)
 if(class(intersections) == "SpatialPolygonsDataFrame") intersections <- intersections@data
 
 #aggregation
 aggregate <- NULL
-print(length(aggregateField))
 if(nchar(aggregateField) > 1) aggregate <- aggregateField
 
 #reallocation
+cat("Reallocating statistical data...\n")
 result <- reallocate(
 			x = statistics,
 			y = intersections,
@@ -41,4 +41,4 @@ result <- reallocate(
 		)
 
 write.table(result, outputFile, row.names = FALSE, col.names = TRUE, sep=",", dec=".")
-print(Sys.time())
+cat(paste0(as.character(Sys.time()),"\n"))

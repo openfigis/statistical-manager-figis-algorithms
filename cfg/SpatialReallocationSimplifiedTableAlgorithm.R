@@ -7,20 +7,18 @@ require(RFigisGeo)
 
 #business logic
 #-------------
-print(Sys.time())
+cat(paste0(as.character(Sys.time()),"\n"))
 
 #read stats
-print("Reading statistical data ...")
+cat("Reading statistical data ...\n")
 statistics <- read.table(inputFile, sep = ",", h = TRUE, quote = "\"")
-print(head(statistics))
 
 #read intersections
-print("Reading intersection...")
+cat("Reading intersection...\n")
 intersectionURL <- paste("http://www.fao.org/figis/geoserver/GeoRelationship/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GeoRelationship:", inputIntersection, sep = "")
 intersections <- readWFS(intersectionURL)
 targetAreaField <- unlist(strsplit(inputIntersection,"_x_"))[1]
 aggregateField <- NULL
-print(includeCalculations)
 if(!includeCalculations){
 	aggregateField <- unlist(strsplit(inputIntersection,"_x_"))[2]
 }
@@ -32,6 +30,7 @@ if(isNumericAreaRef){
 }
 
 #reallocation
+cat("Reallocating statistical data...\n")
 result <- reallocate(
 		x = statistics,
 		y = intersections,
@@ -50,4 +49,4 @@ if(isNumericAreaRef & includeCalculations){
 }
 
 write.table(result, outputFile, row.names = FALSE, col.names = TRUE, sep=",", dec=".")
-print(Sys.time())
+cat(paste0(as.character(Sys.time()),"\n"))

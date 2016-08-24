@@ -4,12 +4,15 @@ inputFile <- "statistics.xml"
 outputFile <- "statistics.csv"
 
 #package needs
+#-------------
 require(rsdmx)
 
 #business logic
-print(Sys.time())
-print(paste("InputFile = ", inputFile, sep=""))
-print(paste("OutputFile = ", outputFile, sep=""))
+#-------------
+cat(paste0(as.character(Sys.time()),"\n"))
+
+cat(paste("InputFile = ", inputFile,"\n", sep=""))
+cat(paste("OutputFile = ", outputFile,"\n", sep=""))
 sdmx <- readSDMX(inputFile, isURL = FALSE) # here isURL = FALSE because SM seems to download inputFile from URL
 statistics <- as.data.frame(sdmx)
 if(RemoveNaObs){
@@ -22,7 +25,6 @@ if(RemoveNaObs){
 	}
 	
 	statistics <- statistics[complete.cases(statistics[,statField]),]
-	print(nrow(statistics))
 }
 write.table(statistics, outputFile, row.names = FALSE, col.names = TRUE, sep=",", dec=".")
-print(Sys.time())
+cat(paste0(as.character(Sys.time()),"\n"))
