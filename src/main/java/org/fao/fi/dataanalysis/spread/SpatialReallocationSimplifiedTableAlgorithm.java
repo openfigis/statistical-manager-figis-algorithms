@@ -118,7 +118,7 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 		//get data
 		String inputFile = null;
 		AnalysisLogger.getLogger().debug("Copying generic table to local csv file...");
-		inputFile = inputTable + ".csv";
+		inputFile = config.getConfigPath() + "/" + inputTable + ".csv";
 		SpreadUtils.createLocalFileFromRemoteTable(
 			inputFile, inputTable, ",", true,
 			config.getDatabaseUserName(),
