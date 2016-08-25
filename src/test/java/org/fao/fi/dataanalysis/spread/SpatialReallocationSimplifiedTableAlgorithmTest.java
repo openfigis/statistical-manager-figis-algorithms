@@ -26,7 +26,7 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 	static final String SERVICE_USERNAME = "name.surname";
 	
 	static final String DB_URL = "jdbc:postgresql://localhost/testdb";
-	static final String DB_USERNAME = "user";
+	static final String DB_USERNAME = "username";
 	static final String DB_PASSWORD = "password";
 	
 	ComputationalAgent transducer1 = null;
@@ -43,7 +43,7 @@ public class SpatialReallocationSimplifiedTableAlgorithmTest {
 		String GEO_REF = "fao_major_area";
 		String STAT = "obsvalue";
 		String INTERSECTION = "FAO_AREAS_x_EEZ_HIGHSEAS";	
-		String INTABLE = this.getResourceFile("spread_input_dataset.csv").getAbsolutePath();
+		String INTABLE = "spread_test";
 		
 		//config 1 (without aggregation)
 		config1 = new AlgorithmConfiguration();

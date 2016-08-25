@@ -1,7 +1,6 @@
 package org.fao.fi.dataanalysis.spread;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,11 +64,14 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 	@Override
 	protected void setInputParameters() {		
 		
-		//input data
-		PrimitiveType inputData = new PrimitiveType(File.class.getName(), null, PrimitiveTypes.FILE, "Dataset",
-				"An input dataset having at least a numerical column and a reference column corresponding to a geographic dimension");
-		inputs.add(inputData);
+		List<TableTemplates> template= new ArrayList<TableTemplates>();
+		template.add(TableTemplates.GENERIC);
 		
+		//input table
+		InputTable table = new InputTable(template, "Dataset","An input dataset having at least a " +
+													"numerical column and a reference column corresponding " +
+													"to a geographic dimension");
+		inputs.add(table);
 		//reference column
 		ColumnType refColumn = new ColumnType("Dataset", "Georef", "Field name of the area for which statistics are reported", null, false);
 		inputs.add(refColumn);
@@ -97,16 +99,10 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 	
 	@Override
 	protected void process() throws Exception {
-
+		
 		//configuration
 		String inputTable = config.getParam("Dataset");
-		boolean withDBInput = !inputTable.contains(".csv");
 		AnalysisLogger.getLogger().debug("Origin Table: "+inputTable);
-		if(withDBInput){
-			AnalysisLogger.getLogger().debug("Input Type: GENERIC Table");
-		}else{
-			AnalysisLogger.getLogger().debug("Input Type: GENERIC CSV file");
-		}
 		
 		destinationTableLabel = config.getParam("TableLabel");
 		AnalysisLogger.getLogger().debug("Destination Table Label: "+destinationTableLabel);
@@ -121,20 +117,13 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 		
 		//get data
 		String inputFile = null;
-		if(!withDBInput){
-			//if input table is a generic CSV file
-			AnalysisLogger.getLogger().debug("Getting generic csv file...");
-			inputFile = inputTable;
-		}else{
-			//if input table is a generic table
-			AnalysisLogger.getLogger().debug("Copying generic table to local csv file...");
-			inputFile = inputTable + ".csv";
-			SpreadUtils.createLocalFileFromRemoteTable(
-				inputFile, inputTable, ",", true,
-				config.getDatabaseUserName(),
-				config.getDatabasePassword(),
-				config.getDatabaseURL());
-		}
+		AnalysisLogger.getLogger().debug("Copying generic table to local csv file...");
+		inputFile = inputTable + ".csv";
+		SpreadUtils.createLocalFileFromRemoteTable(
+			inputFile, inputTable, ",", true,
+			config.getDatabaseUserName(),
+			config.getDatabasePassword(),
+			config.getDatabaseURL());
 		AnalysisLogger.getLogger().debug(inputFile);
 		status = 25;
 		
@@ -149,8 +138,8 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 				
 		//input parameters: represent the context of the script (values will be assigned in the R environment)
 		LinkedHashMap<String,String> inputParameters = new LinkedHashMap<String, String>();
-		inputParameters.put("refAreaField", "\""+config.getParam("Georef")+"\"");
-		inputParameters.put("statField", "\""+config.getParam("Statistic")+"\"");
+		inputParameters.put("refAreaField", "\""+config.getParam("Georef").toLowerCase()+"\"");
+		inputParameters.put("statField", "\""+config.getParam("Statistic").toLowerCase()+"\"");
 		inputParameters.put("inputIntersection", "\""+config.getParam("Intersection")+"\"");
 		inputParameters.put("includeCalculations", config.getParam("IncludeCalculations").toUpperCase());
 		AnalysisLogger.getLogger().debug("SPREAD -> Input Parameters: "+inputParameters);
@@ -181,14 +170,14 @@ public class SpatialReallocationSimplifiedTableAlgorithm extends StandardLocalEx
 		
 		//inherit fieldType from columns that are kept
 		Map<String,String> inputFields = null;
-		if(withDBInput) inputFields = SpreadUtils.getSchemaDescription(inputTable, dbconnection);
+		inputFields = SpreadUtils.getSchemaDescription(inputTable, dbconnection);
 		BufferedReader br = new BufferedReader(new FileReader(outputFile));
 		String[] headers = br.readLine().split(",");
 		br.close();
 		for(String header : headers){
 			String fieldSchemaElement = SpreadUtils.unquote(header.toLowerCase());
 			
-			if(withDBInput && inputFields.containsKey(fieldSchemaElement)){
+			if(inputFields.containsKey(fieldSchemaElement)){
 				fieldSchemaElement += " "+inputFields.get(fieldSchemaElement);
 			}else{
 				if(fieldSchemaElement.matches("int_area") ||
